@@ -22691,13 +22691,17 @@ exports.Company = void 0;
 var faker_1 = require("@faker-js/faker");
 var Company = /** @class */function () {
   function Company() {
-    this.catchPhrase = faker_1.faker.company.catchPhrase();
+    this.color = "red";
+    this.companyName = faker_1.faker.company.companyName();
     this.catchPhrase = faker_1.faker.company.catchPhrase();
     this.location = {
       lat: parseFloat(faker_1.faker.address.latitude()),
       lng: parseFloat(faker_1.faker.address.longitude())
     };
   }
+  Company.prototype.markerContent = function () {
+    return "\n          <div> \n           <h1>Company Name: ".concat(this.companyName, "</h1>\n           <h3>Catchphrase: ").concat(this.catchPhrase, "</h3>\n          </div>\n    ");
+  };
   return Company;
 }();
 exports.Company = Company;
@@ -22711,12 +22715,16 @@ exports.User = void 0;
 var faker_1 = require("@faker-js/faker");
 var User = /** @class */function () {
   function User() {
+    this.color = "red";
     this.name = faker_1.faker.name.firstName();
     this.location = {
       lat: parseFloat(faker_1.faker.address.latitude()),
       lng: parseFloat(faker_1.faker.address.longitude())
     };
   }
+  User.prototype.markerContent = function () {
+    return "<div>\n    \n    <h3>Username : ".concat(this.name, "</h3>\n    \n    </div>\n    ");
+  };
   return User;
 }();
 exports.User = User;
@@ -22738,12 +22746,19 @@ var CustomMap = /** @class */function () {
     });
   }
   CustomMap.prototype.addMarker = function (mappable) {
-    new google.maps.Marker({
+    var _this = this;
+    var marker = new google.maps.Marker({
       map: this.googleMap,
       position: {
         lat: mappable.location.lat,
         lng: mappable.location.lng
       }
+    });
+    marker.addListener("click", function () {
+      var infoWindow = new google.maps.InfoWindow({
+        content: mappable.markerContent()
+      });
+      infoWindow.open(_this.googleMap, marker);
     });
   };
   return CustomMap;
